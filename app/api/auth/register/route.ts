@@ -19,7 +19,6 @@ export async function POST(request: Request) {
   } catch (e: any) {
     console.log(e);
     const code = e.errors[0].extensions.code
-    console.log('---e.errors[0].extensions:', e.errors[0].extensions);
     if (code === 'RECORD_NOT_UNIQUE') {
       return NextResponse.json({ message: "This user already exist" }, { status: 409 });
     }
