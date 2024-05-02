@@ -1,6 +1,6 @@
 import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { Session } from 'next-auth';
+import { User, Session, getServerSession } from 'next-auth';
 import directus from '@/lib/directus';
 import { readMe, withToken } from '@directus/sdk';
 import { JWT } from 'next-auth/jwt';
@@ -55,6 +55,7 @@ export const options: NextAuthOptions = {
             user.data.access_token as string,
             readMe({
               fields: ['id', 'first_name', 'last_name'],
+              // fields: ['*'],
             })
           )
         );
@@ -69,11 +70,39 @@ export const options: NextAuthOptions = {
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
-      if (session.user) {
-        session.user.accessToken = token.accessToken;
-        session.user.refreshToken = token.refreshToken;
+      console.log('---callbackSession-session:', session);
+      console.log('---callbackSession-token:', token);
+      if (!session.user) {
+        console.log('Session.user notfound')
+        return session
       }
-      return session;
+      const newSession = {
+        ...session,
+        user: {
+          ...session.user,
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
+          ...token.user,
+        }
+      }
+      return newSession;
     },
   },
 };
+
+export interface SessionInterface extends Session {
+  user: User & {
+    id: string;
+    name: string;
+    email: string;
+    avatarUrl: string;
+    accessToken?: string;
+    refreshToken?:string;
+  };
+}
+
+export async function getCurrentUser(){
+  const session = await getServerSession(options) as SessionInterface
+
+  return session
+}

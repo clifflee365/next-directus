@@ -13,6 +13,7 @@ interface Data {
 
 export default function LoginForm() {
   const router = useRouter();
+  const [msg, setMsg] = useState("");
   const [error, setError] = useState('');
   const handleFormSubmit = async (data: Data) => {
     const response = await signIn('credentials', {
@@ -21,8 +22,9 @@ export default function LoginForm() {
       redirect: false,
     });
     if (!response?.error) {
-      router.push('/');
-      router.refresh();
+      // router.push('/');
+      // router.refresh();
+      setMsg('Login successful!')
     } else {
       response.status === 401
         ? setError('Your email or password is incorrect')
@@ -32,6 +34,7 @@ export default function LoginForm() {
 
   return (
     <>
+      {msg && <h2>{msg}</h2>}
       {error && <p>{error}</p>}
       <AuthForm
         title="Login here"
