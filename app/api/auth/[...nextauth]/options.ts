@@ -22,6 +22,7 @@ export const options: NextAuthOptions = {
           headers: { 'Content-Type': 'application/json' },
         });
         const user = await res.json();
+        console.log('---/auth/login:', user);
         // If no error and we have user data, return it
         if (!res.ok && user) {
           throw new Error('Email address or password is invalid');
@@ -57,6 +58,7 @@ export const options: NextAuthOptions = {
             })
           )
         );
+        console.log('---callback userData:', userData);
         return {
           ...token,
           accessToken: user.data.access_token,
