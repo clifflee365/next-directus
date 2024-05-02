@@ -1,40 +1,39 @@
-'use client';
-import Link from 'next/link';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+"use client"
+import Link from "next/link"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
-import AuthForm from '@/components/AuthForm';
-import { useState } from 'react';
+import AuthForm from "@/components/AuthForm"
+import { useState } from "react"
 
 interface Data {
-  email?: string;
-  password?: string;
+  email?: string
+  password?: string
 }
 
 export default function LoginForm() {
-  const router = useRouter();
-  const [msg, setMsg] = useState("");
-  const [error, setError] = useState('');
+  const router = useRouter()
+  const [msg, setMsg] = useState("")
+  const [error, setError] = useState("")
   const handleFormSubmit = async (data: Data) => {
-    const response = await signIn('credentials', {
+    const response = await signIn("credentials", {
       email: data.email,
       password: data.password,
       redirect: false,
-    });
+    })
     if (!response?.error) {
       // router.push('/');
       // router.refresh();
-      setMsg('Login successful!')
+      setMsg("Login successful!")
     } else {
       response.status === 401
-        ? setError('Your email or password is incorrect')
-        : null;
+        ? setError("Your email or password is incorrect")
+        : null
     }
-  };
+  }
 
   return (
     <>
-      {msg && <h2>{msg}</h2>}
       {error && <p>{error}</p>}
       <AuthForm
         title="Login here"
@@ -45,13 +44,10 @@ export default function LoginForm() {
         linkHref="/register"
         isFullForm={false}
       />
+      {msg && <h2>{msg}</h2>}
       <div>
-        <Link
-          href="/request-reset-password"
-        >
-          Forgot password?
-        </Link>
+        <Link href="/request-reset-password">Forgot password?</Link>
       </div>
     </>
-  );
+  )
 }
