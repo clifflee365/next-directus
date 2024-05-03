@@ -1,5 +1,5 @@
 import { createDirectus, rest, authentication } from '@directus/sdk';
-console.log('---process.env.BACKEND_URL:', process.env.BACKEND_URL);
+// console.log('---process.env.BACKEND_URL:', process.env.BACKEND_URL);
 
 const DIRECTUS_URL = process.env.BACKEND_URL || "http://122.51.12.238:8055"
 

@@ -4,9 +4,20 @@ import { User, Session, getServerSession } from 'next-auth';
 import directus from '@/lib/directus';
 import { readMe, withToken } from '@directus/sdk';
 import { JWT } from 'next-auth/jwt';
+import GitHubProvider from 'next-auth/providers/github'
+import GoogleProvider from 'next-auth/providers/google'
+import { AdapterUser } from 'next-auth/adapters';
 
 export const options: NextAuthOptions = {
   providers: [
+    // GitHubProvider({
+    //   clientId: process.env.GITHUB_ID as string,
+    //   clientSecret: process.env.GITHUB_SECRET as string
+    // }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID as string,
+      clientSecret: process.env.GOOGLE_SECRET as string
+    }),
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
       name: 'Credentials',
@@ -49,7 +60,8 @@ export const options: NextAuthOptions = {
       user: any;
       account: any;
     }) {
-      if (account && user) {
+      console.log('---[next-auth]callback jwt:', {token, account, user});
+      if (account && user && account.type === 'credentials') {
         const userData = await directus.request(
           withToken(
             user.data.access_token as string,
@@ -59,7 +71,7 @@ export const options: NextAuthOptions = {
             })
           )
         );
-        console.log('---callback userData:', userData);
+        console.log('---callback-jwt userData:', userData);
         return {
           ...token,
           accessToken: user.data.access_token,
@@ -69,9 +81,8 @@ export const options: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
-      console.log('---callbackSession-session:', session);
-      console.log('---callbackSession-token:', token);
+    async session({ session, token, user }: { session: Session; token: any; user: AdapterUser }) {
+      console.log('---[next-auth]callback-session:', { session, token, user });
       if (!session.user) {
         console.log('Session.user notfound')
         return session
@@ -85,8 +96,18 @@ export const options: NextAuthOptions = {
           ...token.user,
         }
       }
+      console.log('---callback newSession:', newSession);
       return newSession;
     },
+    async signIn({ user, account, profile, email, credentials }){
+      console.log('---[next-auth]callback-signIn:', { user, account, profile, email, credentials });
+      try {
+        // 将 google 或 github 三方登录信息写入数据库
+        return true
+      } catch (error) {
+        return false
+      }
+    }
   },
 };
 
