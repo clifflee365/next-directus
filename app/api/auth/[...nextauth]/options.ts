@@ -51,6 +51,36 @@ export const options: NextAuthOptions = {
     signIn: '/login',
   },
   callbacks: {
+    async signIn({ user, account, profile, email, credentials }){
+      console.log('---[next-auth]callback-signIn:', { user, account, profile, email, credentials });
+      try {
+        // 将 google 或 github 三方登录信息写入数据库
+        // if(account && user && account.type === 'oauth'){
+        //   const data = {
+        //     first_name: profile?.given_name || '',
+        //     last_name: profile?.family_name || '',
+        //     email: user.email,
+        //     image: user.image
+        //   }
+        //   const response = await fetch(`/api/auth/user`, {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //       ...data,
+        //     }),
+        //   });
+        //   if (response.status === 201) {
+        //     console.log('---OAuth Create User Successful!');
+        //   } else if(response.status === 409) {
+        //     console.log('OAuth Create User Error')
+              
+        //   }
+        // }
+
+        return true
+      } catch (error) {
+        return false
+      }
+    },
     async jwt({
       token,
       user,
@@ -99,15 +129,6 @@ export const options: NextAuthOptions = {
       console.log('---callback newSession:', newSession);
       return newSession;
     },
-    async signIn({ user, account, profile, email, credentials }){
-      console.log('---[next-auth]callback-signIn:', { user, account, profile, email, credentials });
-      try {
-        // 将 google 或 github 三方登录信息写入数据库
-        return true
-      } catch (error) {
-        return false
-      }
-    }
   },
 };
 

@@ -22,9 +22,9 @@ export default function LoginForm() {
       redirect: false,
     })
     if (!response?.error) {
-      // router.push('/');
-      // router.refresh();
       setMsg("Login successful!")
+      router.push('/');
+      router.refresh();
     } else {
       response.status === 401
         ? setError("Your email or password is incorrect")
@@ -44,7 +44,11 @@ export default function LoginForm() {
         linkHref="/register"
         isFullForm={false}
       />
-      {msg && <h2>{msg}</h2>}
+      {msg && (
+        <div>
+          <h2>{msg}</h2>
+        </div>
+      )}
       <div>
         <Link href="/request-reset-password">Forgot password?</Link>
       </div>
